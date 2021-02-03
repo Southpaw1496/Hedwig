@@ -44,7 +44,7 @@ These features will be added to Hedwig before the first full release.
 5. Run the bot
 
 ## Contributing
-Pull requests that fix bugs will generally be accepted. Those at add features will generally not be accepted.
+Pull requests that fix bugs will generally be accepted. Those at add features will generally not be accepted. If you want a feature pull request to be accepted, the best way to improve your chance is to create a [Feature Request Issue](https://github.com/Southpaw1496/Hedwig/issues/new?assignees=&labels=&template=feature_request.md&title=%5BREQUEST%5D) and wait to get that approved before PRing 
 
 ## Support
 If you need support with installing or using Hedwig (AFTER following the installation instructions) you can DM me on [Twitter](https://twitter.com/Southpaw1496) or Discord (Southpaw#1496, will only work if we share a server with DMs on), or you can create a GitHub issue. I may create a Discord server if there is enough demand.
