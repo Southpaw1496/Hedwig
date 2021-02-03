@@ -1,4 +1,6 @@
 # Hedwig (BETA)
+[Latest Releases](https://github.com/Southpaw1496/Hedwig/releases)
+
 **Note:** Hedwig is in BETA. There shouldn't be too many (if any) bugs as the code is pretty simple, but it is in no way feature complete.
 
 Hedwig (named after the faithful letter-carrying owl in Harry Potter) is a simple mod mail bot. Mod mail works on a simple premise: A user will DM the bot, and the bot will create a channel in a designated category in your server, just for that user. Any messages they send to the bot will be relayed to that channel, and any messages sent in their channel will be relayed, annonymysly, to the DM. In this way, any reports can be handled efficiently, collaberatively and anonymously by your moderation team.
