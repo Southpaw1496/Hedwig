@@ -17,6 +17,8 @@ Hedwig (named after the faithful letter-carrying owl in Harry Potter) is a simpl
 
 [Support](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#support)
 
+[Known Issues](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#known-issues)
+
 ## Why use Hedwig?
 While Hedwig may not be the most full-featured mod mail bot out there, there are a few reasons why you might want to use Hedwig over a similar mod mail or ticket bot.
 1. Hedwig is **simple**: Because I don't know how to write complex code, Hedwig is written in simple language. This means that she is easier to modify for your own purposes if you want (which you can do; Hedwig is lisenced under MIT), and it means she's less likely to break and easier to fix if something goes wrong. Even if you're not much of a coder, I designed Hedwig to be easy to set up: Just install the dependencies, fill in the environment variables, start the script and off you go!
@@ -52,4 +54,4 @@ Pull requests that fix bugs will generally be accepted. Those at add features wi
 If you need support with installing or using Hedwig (AFTER following the installation instructions) you can DM me on [Twitter](https://twitter.com/Southpaw1496) or Discord (Southpaw#1496, will only work if we share a server with DMs on), or you can create a GitHub issue. I may create a Discord server if there is enough demand.
 
 ## Known Issues
-* Deleting a channel Hedwig-created channel will probably make bad things happen as there is nothing to remove the channel's entry from the database.
+* ~~Deleting a channel Hedwig-created channel will probably make bad things happen as there is nothing to remove the channel's entry from the database.~~ Fixed in Beta 2
