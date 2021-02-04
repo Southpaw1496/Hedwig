@@ -32,7 +32,6 @@ async def on_message(message):
         userID = message.author.id
         username = message.author.name 
         guild = client.get_guild(int(environ.get("GUILD")))
-        print(guild)
         StoredChannelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
         if StoredChannelID == []:
             category = guild.get_channel(int(environ.get("CATEGORY")))
@@ -54,6 +53,11 @@ async def on_message(message):
 
             await user.send(message.content)
 
+@client.event
+async def on_guild_channel_delete(channel):
+    channel_id = channel.id
+    sqliteCursor.execute("DELETE FROM channels WHERE channel_id=?", (channel_id,))
+    sqliteConnection.commit()
             
              
 
