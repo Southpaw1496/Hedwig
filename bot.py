@@ -13,6 +13,7 @@ intents.members = True
 intents.typing = False
 intents.presences = False
 client = commands.Bot(command_prefix='!', intents=intents)
+guild = client.get_guild(int(environ.get("GUILD")))
 
 
 
@@ -27,11 +28,12 @@ async def on_ready():
 @client.event
 async def on_message(message):
     await client.process_commands(message)
-    if message.author == client.user: return 
+    if message.author == client.user: return
+    guild = client.get_guild(int(environ.get("GUILD"))) 
     if not message.guild:
         userID = message.author.id
-        username = message.author.name 
         guild = client.get_guild(int(environ.get("GUILD")))
+        username = message.author.name 
         StoredChannelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
         if StoredChannelID == []:
             category = guild.get_channel(int(environ.get("CATEGORY")))
@@ -42,6 +44,8 @@ async def on_message(message):
             await channel.send(message.content)
         else:
             channel = client.get_channel(StoredChannelID[0][0])
+            if channel.category == int(environ.get("CATEGORY_ARCHIVE")):
+                await channel.edit(category=category)
             await channel.send(message.content)
     else:
         channel = message.channel
@@ -50,7 +54,10 @@ async def on_message(message):
         if userID == []: return
         else:
             user = client.get_user(userID[0][0])
-
+            if message.channel.category.id == int(environ.get("CATEGORY_ARCHIVE")):
+                print(message.channel.category)
+                category = guild.get_channel(int(environ.get("CATEGORY")))
+                await message.channel.edit(category=category)
             await user.send(message.content)
 
 @client.event
@@ -58,7 +65,13 @@ async def on_guild_channel_delete(channel):
     channel_id = channel.id
     sqliteCursor.execute("DELETE FROM channels WHERE channel_id=?", (channel_id,))
     sqliteConnection.commit()
-            
+@client.command()
+async def archive(context):
+    guild = client.get_guild(int(environ.get("GUILD")))
+    category = guild.get_channel(int(environ.get("CATEGORY_ARCHIVE")))
+    print(category)
+    await context.channel.edit(category=category)
+    await context.channel.send("This channel has been archived")
              
 
 client.run(environ.get("TOKEN"))
