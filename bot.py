@@ -28,7 +28,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     await client.process_commands(message)
-    if message.author == client.user: return
+    if message.author == client.user or message.content.startswith("!"): return
     guild = client.get_guild(int(environ.get("GUILD"))) 
     if not message.guild:
         userID = message.author.id
