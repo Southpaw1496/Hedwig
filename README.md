@@ -5,19 +5,19 @@
 
 Hedwig (named after the faithful letter-carrying owl in Harry Potter) is a simple mod mail bot. Mod mail works on a simple premise: A user will DM the bot, and the bot will create a channel in a designated category in your server, just for that user. Any messages they send to the bot will be relayed to that channel, and any messages sent in their channel will be relayed, annonymysly, to the DM. In this way, any reports can be handled efficiently, collaberatively and anonymously by your moderation team.
 
-[Why use Hedwig?](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#why-use-hedwig)
+[Why use Hedwig?](https://github.com/Southpaw1496/Hedwig#why-use-hedwig)
 
-[Planned 1.0 Features](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#planned-10-features)
+[Planned 1.0 Features](https://github.com/Southpaw1496/Hedwig#planned-10-features)
 
-[Possible Future Features](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#possible-future-features)
+[Possible Future Features](https://github.com/Southpaw1496/Hedwig#possible-future-features)
 
-[Installing](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#installing)
+[Installing](https://github.com/Southpaw1496/Hedwig#installing)
 
-[Contributing](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#contributing)
+[Contributing](https://github.com/Southpaw1496/Hedwig#contributing)
 
-[Support](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#support)
+[Support](https://github.com/Southpaw1496/Hedwig#support)
 
-[Known Issues](https://github.com/Southpaw1496/Hedwig/new/main?readme=1#known-issues)
+[Known Issues](https://github.com/Southpaw1496/Hedwig#support)
 
 ## Why use Hedwig?
 While Hedwig may not be the most full-featured mod mail bot out there, there are a few reasons why you might want to use Hedwig over a similar mod mail or ticket bot.
