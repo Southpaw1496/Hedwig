@@ -55,7 +55,6 @@ async def on_message(message):
         else:
             user = client.get_user(userID[0][0])
             if message.channel.category.id == int(environ.get("CATEGORY_ARCHIVE")):
-                print(message.channel.category)
                 category = guild.get_channel(int(environ.get("CATEGORY")))
                 await message.channel.edit(category=category)
             await user.send(message.content)
@@ -69,9 +68,37 @@ async def on_guild_channel_delete(channel):
 async def archive(context):
     guild = client.get_guild(int(environ.get("GUILD")))
     category = guild.get_channel(int(environ.get("CATEGORY_ARCHIVE")))
-    print(category)
     await context.channel.edit(category=category)
     await context.channel.send("This channel has been archived")
-             
+
+@client.command()
+async def message(context, username=None):
+    guild = client.get_guild(int(environ.get("GUILD")))
+    if username == None:
+        await context.channel.send("Error: Username/ID is a required command argument")
+        return
+    elif message == None:
+        await context.channel.send("Error: You need to send a message to send to the selected user")
+        return
+    elif username.isdecimal()  == True:
+        user = client.get_user(int(username))
+    elif username.isdecimal() == False:
+        user = guild.get_member_named(username)
+    userID = user.id
+    if user == None:
+            await context.channel.send("Couldn't find the user in this guild")
+    else:
+        stored_channel_id = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
+        if stored_channel_id == []:
+            category = guild.get_channel(int(environ.get("CATEGORY")))
+            channel = await guild.create_text_channel(f'{user.name}', category=category)
+            channel_id = channel.id
+            sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
+            sqliteConnection.commit()
+            await context.channel.send(f"Created channel {channel.mention} which is connected to {user.mention}")
+        else:
+            await context.channel.send("Error: This user is already linked to a channel. If you can't find it, look in your archive category")
+        
+    
 
 client.run(environ.get("TOKEN"))
