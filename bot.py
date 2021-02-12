@@ -95,7 +95,7 @@ async def message(context, username=None):
             channel_id = channel.id
             sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
             sqliteConnection.commit()
-            await context.channel.send(f"Created channel {channel.mention} which is connected to {user.mention}")
+            await context.channel.send(f"Created channel {channel.mention} which is connected to {user.mention}. Remember to identify yourself in your first message!")
         else:
             await context.channel.send("Error: This user is already linked to a channel. If you can't find it, look in your archive category")
         
