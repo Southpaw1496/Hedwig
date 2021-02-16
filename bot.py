@@ -74,6 +74,8 @@ async def archive(context):
 @client.command()
 async def message(context, username=None):
     guild = client.get_guild(int(environ.get("GUILD")))
+    roleList = [role.id for role in context.author.roles]
+    if not int(environ.get("MESSAGE_ROLE")) in roleList: return 
     if username == None:
         await context.channel.send("Error: Username/ID is a required command argument")
         return
