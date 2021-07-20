@@ -70,7 +70,7 @@ async def archive(context):
     guild = client.get_guild(int(environ.get("GUILD")))
     category = guild.get_channel(int(environ.get("CATEGORY_ARCHIVE")))
     if context.channel.category_id != int(environ.get("CATEGORY")):
-        print("Error, this channel is not your modmail category")
+        print(f"User {context.author} tried to archive a channel that is not in your modmail category")
         return
     await context.channel.edit(category=category)
     await context.channel.send("This channel has been archived")
