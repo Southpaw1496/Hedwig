@@ -28,9 +28,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     await client.process_commands(message)
-    if message.author == client.user or message.content.startswith("!"): return
-    guild = client.get_guild(int(environ.get("GUILD"))) 
-    if not message.guild:
+    if message.author == client.user or message.guild != None: return 
+    else:
         userID = message.author.id
         guild = client.get_guild(int(environ.get("GUILD")))
         username = message.author.name 
@@ -47,17 +46,19 @@ async def on_message(message):
             if channel.category == int(environ.get("CATEGORY_ARCHIVE")):
                 await channel.edit(category=category)
             await channel.send(message.content)
+
+@client.command(aliases=["r"])
+async def reply(context, *, message):
+    channel = context.channel
+    channel_id = channel.id
+    userID = sqliteCursor.execute("SELECT userID FROM channels WHERE channel_id = ?",(channel_id,)).fetchall()
+    if userID == []: return
     else:
-        channel = message.channel
-        channel_id = channel.id
-        userID = sqliteCursor.execute("SELECT userID FROM channels WHERE channel_id = ?",(channel_id,)).fetchall()
-        if userID == []: return
-        else:
-            user = client.get_user(userID[0][0])
-            if message.channel.category.id == int(environ.get("CATEGORY_ARCHIVE")):
-                category = guild.get_channel(int(environ.get("CATEGORY")))
-                await message.channel.edit(category=category)
-            await user.send(message.content)
+        user = client.get_user(userID[0][0])
+        if context.channel.category.id == int(environ.get("CATEGORY_ARCHIVE")):
+            category = guild.get_channel(int(environ.get("CATEGORY")))
+            await context.channel.edit(category=category)
+        await user.send(message)
 
 @client.event
 async def on_guild_channel_delete(channel):
