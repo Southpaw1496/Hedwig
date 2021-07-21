@@ -40,12 +40,15 @@ async def on_message(message):
             channel_id = channel.id
             sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
             sqliteConnection.commit()
-            await channel.send(message.content)
+            finalMessage = f"**{message.author}:** {message.content}"
+            await channel.send(finalMessage)
+        
         else:
             channel = client.get_channel(StoredChannelID[0][0])
             if channel.category == int(environ.get("CATEGORY_ARCHIVE")):
                 await channel.edit(category=category)
-            await channel.send(message.content)
+            finalMessage = f"**{message.author}:** {message.content}"
+            await channel.send(finalMessage)
 
 @client.command(aliases=["r"])
 async def reply(context, *, message):
