@@ -14,12 +14,23 @@ intents.typing = False
 intents.presences = False
 client = commands.Bot(command_prefix='!', intents=intents)
 guild = client.get_guild(int(environ.get("GUILD")))
+allowedRoles = environ.get("ALLOWED_ROLES").split(", ")
+for i in range(0, len(allowedRoles)):
+    roleName = allowedRoles[i]
+    allowedRoles[i] = int(roleName)
 
-
+def roleCheck(context):
+    userRoles = [role.id for role in context.author.roles]
+    if context.guild.owner == context.author: return True
+    else:
+        for r in userRoles:
+            if r in allowedRoles:
+                return True
+        return False
 
 sqliteConnection = sqlite3.connect("Hedwig.db")
 sqliteCursor = sqliteConnection.cursor()
-sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")
+sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")  
 
 @client.event
 async def on_ready():
@@ -99,8 +110,7 @@ async def archive(context):
 @client.command()
 async def message(context, username=None, *, message=None):
     guild = client.get_guild(int(environ.get("GUILD")))
-    roleList = [role.id for role in context.author.roles]
-    if not int(environ.get("MESSAGE_ROLE")) in roleList: return 
+    if roleCheck(context=context) == False: return
     if username == None:
         await context.channel.send("Error: Username/ID is a required command argument")
         return
