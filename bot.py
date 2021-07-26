@@ -44,9 +44,9 @@ async def on_message(message):
         userID = message.author.id
         guild = client.get_guild(int(environ.get("GUILD")))
         username = message.author.name 
+        category = guild.get_channel(int(environ.get("CATEGORY")))
         StoredChannelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
         if StoredChannelID == []:
-            category = guild.get_channel(int(environ.get("CATEGORY")))
             channel = await guild.create_text_channel(f'{username}', category=category)
             channel_id = channel.id
             sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
@@ -75,6 +75,12 @@ async def on_message_edit(before, after):
         finalMessage = f"**{before.author} edited their message:** \n `A:` {before.content} \n `B:` {after.content}"
         await channel.send(finalMessage)
 
+@client.event
+async def on_guild_channel_delete(channel):
+    channel_id = channel.id
+    sqliteCursor.execute("DELETE FROM channels WHERE channel_id=?", (channel_id,))
+    sqliteConnection.commit()
+
 
 @client.command(aliases=["r"])
 async def reply(context, *, message):
@@ -92,11 +98,6 @@ async def reply(context, *, message):
         await channel.send(publicDisplayMessage)
         await user.send(message)
 
-@client.event
-async def on_guild_channel_delete(channel):
-    channel_id = channel.id
-    sqliteCursor.execute("DELETE FROM channels WHERE channel_id=?", (channel_id,))
-    sqliteConnection.commit()
 @client.command()
 async def archive(context):
     guild = client.get_guild(int(environ.get("GUILD")))
