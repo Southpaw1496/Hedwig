@@ -61,6 +61,9 @@ async def reply(context, *, message):
         if context.channel.category.id == int(environ.get("CATEGORY_ARCHIVE")):
             category = guild.get_channel(int(environ.get("CATEGORY")))
             await context.channel.edit(category=category)
+        publicDisplayMessage = f"**{context.author.display_name}:** {message}"
+        await context.message.delete()
+        await channel.send(publicDisplayMessage)
         await user.send(message)
 
 @client.event
@@ -79,7 +82,7 @@ async def archive(context):
     await context.channel.send("This channel has been archived")
 
 @client.command()
-async def message(context, username=None):
+async def message(context, username=None, *, message=None):
     guild = client.get_guild(int(environ.get("GUILD")))
     roleList = [role.id for role in context.author.roles]
     if not int(environ.get("MESSAGE_ROLE")) in roleList: return 
