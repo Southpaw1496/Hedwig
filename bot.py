@@ -50,6 +50,21 @@ async def on_message(message):
             finalMessage = f"**{message.author}:** {message.content}"
             await channel.send(finalMessage)
 
+@client.event
+async def on_message_edit(before, after):
+    if before.author == client.user or before.guild != None or before.content == after.content: return 
+    else:
+        userID = before.author.id
+        guild = client.get_guild(int(environ.get("GUILD")))
+        category = guild.get_channel(int(environ.get("CATEGORY")))
+        StoredChannelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
+        channel = client.get_channel(StoredChannelID[0][0])
+        if channel.category == int(environ.get("CATEGORY_ARCHIVE")):
+            await channel.edit(category=category)
+        finalMessage = f"**{before.author} edited their message:** \n `A:` {before.content} \n `B:` {after.content}"
+        await channel.send(finalMessage)
+
+
 @client.command(aliases=["r"])
 async def reply(context, *, message):
     channel = context.channel
