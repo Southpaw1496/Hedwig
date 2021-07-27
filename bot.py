@@ -43,11 +43,23 @@ def linkCheck(userID):
         return False
     return True
 
-
+async def usernameParser(context, guild, username):
+    if username == None:
+        await context.channel.send("⚠️ **Error**: Username/ID is a required command argument")
+        return
+    elif username.isdecimal()  == True:
+        user = client.get_user(int(username))
+    elif username.isdecimal() == False:
+        user = guild.get_member_named(username)
+    if user == None:
+            await context.channel.send("⚠️ **Error**: Couldn't find the user in this guild")
+            return
+    return user
 
 sqliteConnection = sqlite3.connect("Hedwig.db")
 sqliteCursor = sqliteConnection.cursor()
 sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")
+
 
 @client.event
 async def on_ready():
@@ -132,15 +144,9 @@ async def archive(context):
 async def message(context, username=None, *, message=None):
     guild = client.get_guild(int(environ.get("GUILD")))
     if roleCheck(context=context) == False: return
-    if username == None:
-        await context.channel.send("⚠️ **Error**: Username/ID is a required command argument")
-        return
-    elif username.isdecimal()  == True:
-        user = client.get_user(int(username))
-    elif username.isdecimal() == False:
-        user = guild.get_member_named(username)
+    user = await usernameParser(context=context, username=username, guild=guild)
     if user == None:
-            await context.channel.send("⚠️ **Error**: Couldn't find the user in this guild")
+            return
     elif message == None:
         await context.channel.send("⚠️ **Error**: You need to send a message to the user")
     elif linkCheck(userID=user.id) == False:
