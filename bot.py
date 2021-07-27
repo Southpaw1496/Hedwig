@@ -69,6 +69,8 @@ async def on_message(message):
             sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
             sqliteConnection.commit()
             finalMessage = f"**{message.author}:** {message.content}"
+            await message.author.send("✅ Your message has been received, we'll get back to you as soon as possible")
+            await channel.send(f"**⚙️ {client.user.display_name}:** ✅ Your message has been received, we'll get back to you as soon as possible")
             await channel.send(finalMessage)
         
         else:
