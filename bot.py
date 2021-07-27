@@ -141,6 +141,31 @@ async def archive(context):
     await context.channel.send("✅ This channel has been archived")
 
 @client.command()
+async def link(context, username):
+    if roleCheck(context=context) == False:
+        return
+    guild = client.get_guild(int(environ.get("GUILD")))
+    user = await usernameParser(context=context, username=username,guild=guild)
+    if user == None:
+        return
+    sqliteCursor.execute("DELETE FROM channels WHERE userID=?", (user.id,))
+    sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, user.id, context.channel.id))
+    sqliteConnection.commit()
+    await context.channel.send(f"✅ This channel is now linked to {user.mention}. Use !unlink to unlink it")
+
+@client.command()
+async def unlink(context):
+    if roleCheck(context=context) == False:
+        return
+    channelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE channel_id = ?",(context.channel.id,)).fetchall()
+    if channelID == None:
+        await context.channel.send("⚠️ **Error:** This channel is not linked to a user")
+    else:
+        sqliteCursor.execute("DELETE FROM channels WHERE channel_id = ?", (context.channel.id,))
+        sqliteConnection.commit()
+        await context.channel.send("✅ This channel has been unlinked")
+
+@client.command()
 async def message(context, username=None, *, message=None):
     guild = client.get_guild(int(environ.get("GUILD")))
     if roleCheck(context=context) == False: return
