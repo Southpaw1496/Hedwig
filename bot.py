@@ -13,7 +13,6 @@ intents.members = True
 intents.typing = False
 intents.presences = False
 client = commands.Bot(command_prefix='!', intents=intents)
-guild = client.get_guild(int(environ.get("GUILD")))
 allowedRoles = environ.get("ALLOWED_ROLES").split(", ")
 for i in range(0, len(allowedRoles)):
     roleName = allowedRoles[i]
@@ -28,9 +27,27 @@ def roleCheck(context):
                 return True
         return False
 
+async def userLink(user, guild):
+    userID = user.id
+    stored_channel_id = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
+    if stored_channel_id == []:
+        category = guild.get_channel(int(environ.get("CATEGORY")))
+        channel = await guild.create_text_channel(f'{user.name}', category=category)
+        channel_id = channel.id
+        sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (user.name, userID, channel_id))
+        sqliteConnection.commit()
+
+def linkCheck(userID):
+    stored_channel_id = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
+    if stored_channel_id == []:
+        return False
+    return True
+
+
+
 sqliteConnection = sqlite3.connect("Hedwig.db")
 sqliteCursor = sqliteConnection.cursor()
-sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")  
+sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")
 
 @client.event
 async def on_ready():
@@ -84,6 +101,7 @@ async def on_guild_channel_delete(channel):
 
 @client.command(aliases=["r"])
 async def reply(context, *, message):
+    guild = client.get_guild(int(environ.get("GUILD")))
     channel = context.channel
     channel_id = channel.id
     userID = sqliteCursor.execute("SELECT userID FROM channels WHERE channel_id = ?",(channel_id,)).fetchall()
@@ -106,36 +124,36 @@ async def archive(context):
         print(f"User {context.author} tried to archive a channel that is not in your modmail category")
         return
     await context.channel.edit(category=category)
-    await context.channel.send("This channel has been archived")
+    await context.channel.send("✅ This channel has been archived")
 
 @client.command()
 async def message(context, username=None, *, message=None):
     guild = client.get_guild(int(environ.get("GUILD")))
     if roleCheck(context=context) == False: return
     if username == None:
-        await context.channel.send("Error: Username/ID is a required command argument")
-        return
-    elif message == None:
-        await context.channel.send("Error: You need to send a message to send to the selected user")
+        await context.channel.send("⚠️ **Error**: Username/ID is a required command argument")
         return
     elif username.isdecimal()  == True:
         user = client.get_user(int(username))
     elif username.isdecimal() == False:
         user = guild.get_member_named(username)
-    userID = user.id
     if user == None:
-            await context.channel.send("Couldn't find the user in this guild")
+            await context.channel.send("⚠️ **Error**: Couldn't find the user in this guild")
+    elif message == None:
+        await context.channel.send("⚠️ **Error**: You need to send a message to the user")
+    elif linkCheck(userID=user.id) == False:
+        await userLink(user=user, guild=guild)
+        StoredChannelID = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(user.id,)).fetchall()
+        channel = client.get_channel(StoredChannelID[0][0])
+        finalMessage = f"***Message from the moderators of {guild}:*** \n {message} \n \n ***To respond, simply send a message in this DM***"
+        await channel.send(f"`Channel created by {context.author.display_name} via command` \n \n **⚙️ {client.user.display_name}:** {finalMessage}")
+        await user.send(finalMessage)
+        await context.channel.send(f"✅ Created channel {channel.mention} which is linked to {user.mention}")
     else:
-        stored_channel_id = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(userID,)).fetchall()
-        if stored_channel_id == []:
-            category = guild.get_channel(int(environ.get("CATEGORY")))
-            channel = await guild.create_text_channel(f'{user.name}', category=category)
-            channel_id = channel.id
-            sqliteCursor.execute("INSERT INTO channels VALUES (?, ?, ?)", (username, userID, channel_id))
-            sqliteConnection.commit()
-            await context.channel.send(f"Created channel {channel.mention} which is connected to {user.mention}. Remember to identify yourself in your first message!")
-        else:
-            await context.channel.send("Error: This user is already linked to a channel. If you can't find it, look in your archive category")
+        stored_channel_id = sqliteCursor.execute("SELECT channel_id FROM channels WHERE userID = ?",(user.id,)).fetchall()
+        channel = client.get_channel(int(stored_channel_id[0][0]))
+        await context.channel.send(f"⚠️ **Error:** This user is already linked to {channel.mention}")
+        
         
     
 
