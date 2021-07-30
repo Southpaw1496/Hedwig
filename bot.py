@@ -1,3 +1,4 @@
+from typing import List
 import discord
 from discord.ext import commands
 from discord import Embed, Colour
@@ -17,6 +18,11 @@ allowedRoles = environ.get("ALLOWED_ROLES").split(", ")
 for i in range(0, len(allowedRoles)):
     roleName = allowedRoles[i]
     allowedRoles[i] = int(roleName)
+pingRoles = environ.get("PING_ROLES").split(", ")
+for i in range(0, len(pingRoles)):
+    roleName = pingRoles[i]
+    pingRoles[i] = int(roleName)
+
 
 def roleCheck(context):
     userRoles = [role.id for role in context.author.roles]
@@ -56,6 +62,18 @@ async def usernameParser(context, guild, username):
             return
     return user
 
+async def listPing(list, channel, type, delete):
+    if list == []: return
+    finalMessageContent = ""
+    for i in list:
+        if type == "user":
+            finalMessageContent = finalMessageContent + f"<@{i}> "
+        elif type == "role":
+            finalMessageContent = finalMessageContent + f"<@&{i}> "
+    finalMessage = await channel.send(finalMessageContent)
+    if delete == True:
+       await finalMessage.delete()
+
 sqliteConnection = sqlite3.connect("Hedwig.db")
 sqliteCursor = sqliteConnection.cursor()
 sqliteCursor.execute("CREATE TABLE IF NOT EXISTS channels (username TEXT, userID INTEGER, channel_id INTEGER)")
@@ -84,6 +102,8 @@ async def on_message(message):
             await message.author.send("✅ Your message has been received, we'll get back to you as soon as possible")
             await channel.send(f"**⚙️ {client.user.display_name}:** ✅ Your message has been received, we'll get back to you as soon as possible")
             await channel.send(finalMessage)
+            await listPing(channel=channel, list=pingRoles, type="role", delete=True)
+
         
         else:
             channel = client.get_channel(StoredChannelID[0][0])
