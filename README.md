@@ -1,4 +1,8 @@
 # Hedwig (BETA)
+
+ ## ⚠️ **Important** ⚠️
+ Due to [the discontinuation of Discord.py](https://gist.github.com/Rapptz/4a2f62751b9600a31a0d3c78100287f1), which Hedwig needs in order to connect to Discord, the python version **is no longer recommended**. I am working on rewriting it in Kotlin (using the excellent [Kordex](https://kordex.kotlindiscord.com) library), which will mean that she comes as a single JAR file with no dependencies to install. There is no ETA for when this will be ready, but I am hoping to finish before the year's end.
+
 [Latest Releases](https://github.com/Southpaw1496/Hedwig/releases)
 
 **Note:** Hedwig is in BETA. There shouldn't be too many (if any) bugs as the code is pretty simple, but it is in no way feature complete.
